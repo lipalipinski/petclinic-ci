@@ -53,7 +53,7 @@ pipeline {
                     env.VERSION = pom.getVersion()
                     env.IMG_NAME = "${env.APP_ID}:${env.VERSION}"
                     docker.withRegistry("https://${NEXUS_DOCKER_SNAPS}", 'nexus-admin') {
-                        def myImage = docker.build("${env.IMG_NAME}", "-f ${env.CI_REPO}/Dockerfile ./")
+                        def myImage = docker.build("${env.IMG_NAME}", "--build-arg jarfile=target/${env.APP_ID}-${env.VERSION}.jar -f ${env.CI_REPO}/Dockerfile ./")
                         myImage.push()
                     }
                 }
