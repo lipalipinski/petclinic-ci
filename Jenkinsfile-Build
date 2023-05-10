@@ -1,6 +1,6 @@
 /* 
 expects Dockerfile to contenerize the app
-expects mv-settings.xml for nexus repo setup
+expects mvn-settings.xml for nexus repo setup
 */
 
 pipeline {
@@ -25,10 +25,21 @@ pipeline {
     }
 
     stages {
+        stage('clone CI repo') {
+            steps {
+                // clone CI repo to <workdir>/CI-REPO
+                checkout scmGit(
+                    branches: [[name: 'main']], 
+                    extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'CI-REPO']], 
+                    // CI repo URL from var set by emote Jenkinsfile Provider plugin
+                    userRemoteConfigs: [[url: "${env.RJPP_SCM_URL}"]]
+                )
+            }
+        }
         stage('deploy') {
             steps {
                 echo "Building..."
-                sh "mvn -Dmaven.test.failure.ignore=true --batch-mode -s mvn-settings.xml clean deploy"
+                sh "mvn -Dmaven.test.failure.ignore=true --batch-mode -s CI-REPO/mvn-settings.xml clean deploy"
             }
         }
         stage('Build container') {
