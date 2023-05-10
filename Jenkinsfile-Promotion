@@ -1,0 +1,85 @@
+// takes artifact to promote version as parameter VERSION
+pipeline {
+    agent {label 'docker'}
+ 
+    environment {
+        // nexus URL (host:port)
+        NEXUS_URL=credentials('nexus-url')
+        // releases repo URL (http://host:port/repo)
+        NEXUS_RELEASES=credentials('nexus-mvn-releases')
+        // releases repo URL (http://host:port/repo)
+        NEXUS_SNAPSHOTS=credentials('nexus-mvn-snapshots')
+        // releases repo URL (http://host:port/repo)
+        NEXUS_CENTRAL=credentials('nexus-mvn-central')
+        // NEXUS_ADMIN_USR NEXUS_ADMIN_PSW
+        NEXUS_ADMIN=credentials('nexus-admin')
+        // nexus docker registry (host:port)
+        NEXUS_DOCKER_SNAPS=credentials('docker-reg-url-snaps')
+        NEXUS_DOCKER_REL=credentials('docker-reg-url-rel')
+    }
+
+    stages {
+        stage('pull artifact') {
+            steps {
+                script {
+                    env.REPO_NAME='maven-snapshots'
+                    env.GROUP_ID='org.springframework.samples'
+                    env.ART_ID='spring-petclinic'
+                    sh 'curl -L -u $NEXUS_ADMIN --output "$ART_ID-$VERSION.jar" -X GET "http://$NEXUS_URL/service/rest/v1/search/assets/download?sort=version&repository=$REPO_NAME&maven.groupId=$GROUP_ID&maven.artifactId=$ART_ID&maven.baseVersion=$VERSION&maven.extension=jar"'
+                    env.JAR_SHA1=sh(
+                        returnStdout: true, 
+                        script: 'curl -L -u $NEXUS_ADMIN -X GET "http://$NEXUS_URL/service/rest/v1/search/assets/download?sort=version&repository=$REPO_NAME&maven.groupId=$GROUP_ID&maven.artifactId=$ART_ID&maven.baseVersion=$VERSION&maven.extension=jar.sha1"'
+                    ).trim()
+                }
+                verifySha1 file: "${env.ART_ID}-${env.VERSION}.jar", hash: "${env.JAR_SHA1}"
+            }
+        }
+        stage('promote & push'){
+            steps {
+                script {
+                    env.NEW_VERSION=sh(
+                        returnStdout: true, 
+                        script: 'echo "${VERSION%-SNAPSHOT}"'
+                    ).trim()
+                    sh 'mv $ART_ID-$VERSION.jar "$ART_ID-$NEW_VERSION.jar"'
+                }
+                nexusArtifactUploader(
+                    nexusVersion: 'nexus3', 
+                    credentialsId: 'nexus-admin', 
+                    groupId: 'org.springframework.samples', 
+                    nexusUrl: "${NEXUS_URL}", 
+                    protocol: 'http', 
+                    repository: 'maven-releases', 
+                    version: "${NEW_VERSION}",
+                    artifacts: [
+                        [artifactId: 'spring-petclinic', 
+                        classifier: '', 
+                        file: "${ART_ID}-${NEW_VERSION}.jar", 
+                        type: 'jar']
+                    ] 
+                )
+            }
+        }
+        stage('dockerize'){
+            steps{
+                script{
+                    docker.withRegistry("https://${NEXUS_DOCKER_REL}", 'nexus-admin') {
+                        def myImage = docker.build("petclinic:${env.NEW_VERSION}")
+                        myImage.push()
+                    }
+                }
+            }
+        }
+    }
+    
+    post {
+        success {
+            script {
+                build job: 'Petclinic-Deploy', parameters: [string(name: 'VERSION', value: "${env.NEW_VERSION}")]
+            }
+        }
+        always {
+            cleanWs()
+        }   
+    }
+}
