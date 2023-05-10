@@ -1,8 +1,10 @@
 #!/bin/bash
 
-step=2
+# check if server responds on a given port
+
+interval=2
 tout=60
-port=80
+port="$1"
 
 for (( i=0; i<$tout; i+=$step ))
 do 

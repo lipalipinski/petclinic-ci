@@ -19,7 +19,7 @@ pipeline {
                 script{
                     docker.withRegistry("https://${env.NEXUS_DOCKER_REL}", 'nexus-admin') {
                         docker.image("petclinic:${env.VERSION}").withRun('--rm -p 80:8080') {
-                            sh './jenkins/check-site.sh'
+                            sh './scripts/check-site.sh 80'
                         }
                     }
                 }
