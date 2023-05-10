@@ -18,10 +18,21 @@ pipeline {
     }
 
     stages {
+        stage('clone CI repo') {
+            steps {
+                // clone CI repo to <workdir>/ci-repo
+                checkout scmGit(
+                    branches: [[name: 'main']], 
+                    extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'ci-repo']], 
+                    // CI repo URL from var set by emote Jenkinsfile Provider plugin
+                    userRemoteConfigs: [[url: "${env.RJPP_SCM_URL}"]]
+                )
+            }
+        }
         stage('test app') {
             steps {
                 echo "Building..."
-                sh "mvn -Dmaven.test.failure.ignore=true --batch-mode -s mvn-settings.xml clean test"
+                sh "mvn -Dmaven.test.failure.ignore=true --batch-mode -s ci-repo/mvn-settings.xml clean test"
             }
         }
     }
