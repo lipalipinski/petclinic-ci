@@ -1,0 +1,28 @@
+pipeline {
+    agent {label 'docker'}
+
+    tools {
+        // Install Maven
+        maven 'maven-3.9.1'
+    }
+
+    environment {
+        // releases repo URL
+        NEXUS_RELEASES=credentials('nexus-mvn-releases')
+        // snapshots repo URL
+        NEXUS_SNAPSHOTS=credentials('nexus-mvn-snapshots')
+        // central proxy repo URL
+        NEXUS_CENTRAL=credentials('nexus-mvn-central')
+        // NEXUS_ADMIN_USR NEXUS_ADMIN_PSW
+        NEXUS_ADMIN=credentials('nexus-admin')
+    }
+
+    stages {
+        stage('test app') {
+            steps {
+                echo "Building..."
+                sh "mvn -Dmaven.test.failure.ignore=true --batch-mode -s mvn-settings.xml clean test"
+            }
+        }
+    }
+}
