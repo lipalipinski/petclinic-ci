@@ -64,7 +64,7 @@ pipeline {
             steps{
                 script{
                     docker.withRegistry("https://${NEXUS_DOCKER_REL}", 'nexus-admin') {
-                        def myImage = docker.build("${env.IMG_NAME}", "--build-arg jarfile=${ART_ID}-${NEW_VERSION}.jar ./")
+                        def myImage = docker.build("petclinic:${env.NEW_VERSION}", "--build-arg jarfile=${ART_ID}-${NEW_VERSION}.jar ./")
                         myImage.push()
                     }
                 }
