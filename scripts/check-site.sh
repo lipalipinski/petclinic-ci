@@ -4,11 +4,11 @@
 
 interval=2
 tout=60
-port="$1"
+port=$1
 
 for (( i=0; i<$tout; i+=$step ))
 do 
-  resp=$(curl -s -I localhost:"$port" | grep "HTTP/1.1")
+  resp=$(curl -s -I localhost:$port | grep "HTTP/1.1")
   if [[ $resp == *"200"* ]]
   then
     echo "$resp"
