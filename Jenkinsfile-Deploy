@@ -9,7 +9,6 @@ pipeline {
         // NEXUS_ADMIN_USR NEXUS_ADMIN_PSW
         NEXUS_ADMIN=credentials('nexus-admin')
         // nexus docker registry (host:port)
-        NEXUS_DOCKER_SNAPS=credentials('docker-reg-url-snaps')
         NEXUS_DOCKER_REL=credentials('docker-reg-url-rel')
     }
 
@@ -17,8 +16,12 @@ pipeline {
         stage('Run app') {
             steps {
                 script{
+                    // set custom build name
+                    currentBuild.displayName = "#" + currentBuild.number + " ${env.VERSION}"
+                    // run app container
                     docker.withRegistry("https://${env.NEXUS_DOCKER_REL}", 'nexus-admin') {
                         docker.image("petclinic:${env.VERSION}").withRun('--rm -p 80:8080') {
+                            // check if app is available on port :80
                             sh './scripts/check-site.sh 80'
                         }
                     }

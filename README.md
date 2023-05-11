@@ -32,3 +32,10 @@ Promotion job:
 - Build Docker image with released artifact (pulls proper version from Nexus release repo). Tag it like: petclinic:release-artifact-version (e.g. petclinic:1.0.0) and push it to DockerHub release registry.
 - trigger deploy job(release version)
 
+## Jenkinsfile-Deploy
+
+Deployment job:
+- can be triggered by the Promotion job or manually;
+- receives artifact version as a parameter;
+- runs Docker container on the slave instance. 
+- Make sure that you are able to open the PetClinic start page on 80 port.
