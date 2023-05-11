@@ -39,7 +39,7 @@ pipeline {
                 verifySha1 file: "${env.ART_ID}-${env.VERSION}.jar", hash: "${env.JAR_SHA1}"
             }
         }
-        stage('promote & push'){
+        stage('Promote & push'){
             steps {
                 script {
                     env.NEW_VERSION=sh(
