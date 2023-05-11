@@ -19,8 +19,15 @@ pipeline {
     }
 
     stages {
-        stage('pull artifact') {
+        stage('Pull artifact') {
             steps {
+                // set custom build name
+                script {
+                    def pom = readMavenPom()
+                    env.VERSION = pom.getVersion()
+                    currentBuild.displayName = "#" + currentBuild.number + " ${env.VERSION}"
+                }
+                // download artifact from nexus
                 script {
                     env.REPO_NAME='maven-snapshots'
                     env.GROUP_ID='org.springframework.samples'
@@ -60,7 +67,7 @@ pipeline {
                 )
             }
         }
-        stage('dockerize'){
+        stage('Dockerize'){
             steps{
                 script{
                     docker.withRegistry("https://${NEXUS_DOCKER_REL}", 'nexus-admin') {
