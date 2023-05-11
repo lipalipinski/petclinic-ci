@@ -15,33 +15,38 @@ pipeline {
         NEXUS_CENTRAL=credentials('nexus-mvn-central')
         // NEXUS_ADMIN_USR NEXUS_ADMIN_PSW
         NEXUS_ADMIN=credentials('nexus-admin')
+        // CI repo dir name
+        CI_REPO_DIR="CI-REPOSITORY"
+    }
+    
+    options { 
+        skipDefaultCheckout() 
     }
 
     stages {
-        stage('clone CI repo') {
+        stage('checkout SCM') {
             steps {
-                // set build name and description from pom.xml
-                script {
-                    def pom = readMavenPom()
-                    env.APP_ID = pom.getArtifactId()
-                    env.GROUP_ID = pom.getGroupId()
-                    env.VERSION = pom.getVersion()
-                    currentBuild.displayName = "#" + currentBuild.number + " ${env.VERSION}"
-                    currentBuild.description = "${env.GROUP_ID}.${env.APP_ID}-${env.VERSION}"
-                }
-                // clone CI repo to <workdir>/CI-REPO
+                // checkout app repo
+                checkout scm
+                // checkout CI repo to <workdir>/"${env.CI_REPO_DIR}"
                 checkout scmGit(
                     branches: [[name: 'main']], 
-                    extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'CI-REPO']], 
+                    extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${env.CI_REPO_DIR}"]], 
                     // CI repo URL from var set by emote Jenkinsfile Provider plugin
                     userRemoteConfigs: [[url: "${env.RJPP_SCM_URL}"]]
                 )
+                // set custom build name
+                script {
+                    def pom = readMavenPom()
+                    env.VERSION = pom.getVersion()
+                    currentBuild.displayName = "#" + currentBuild.number + " ${env.VERSION}"
+                }
             }
         }
         stage('test app') {
             steps {
                 echo "Building..."
-                sh "mvn -Dmaven.test.failure.ignore=true --batch-mode -s CI-REPO/mvn-settings.xml clean test"
+                sh "mvn -Dmaven.test.failure.ignore=true --batch-mode -s ${env.CI_REPO_DIR}/mvn-settings.xml clean test"
             }
         }
     }
