@@ -2,7 +2,7 @@
 
 This repo is a part of Intro to DevOps final project. It's main purpose is to separate CI/CD related files from app repo.
 
-Jenkins pipelines are designed to be used with [Remote Jenkinsfile Provider](https://plugins.jenkins.io/remote-file/). Main logic is to set Branch Source to app respository, and this repo in Jenkinsfile SCM/Repository URL in Build Confiiguration (with Mode set to Remote Jenkinsfile Provider Plugin) in Jenkins. This repository is being checkout into workdir if necessary in the checkout SCM step. 
+Jenkins pipelines are designed to be used with [Remote Jenkinsfile Provider](https://plugins.jenkins.io/remote-file/). Main logic is to set Branch Source to app respository, and this repo in Jenkinsfile SCM/Repository URL in Build Confiiguration (with Mode set to Remote Jenkinsfile Provider Plugin) in Jenkins. This repository is being checkout into workdir if necessary in the checkout SCM step. Eacz pipeline sets custom build name like #[build no.] [VERSION].
 
 ## Jenkinsfile-PreCommit
 
@@ -23,6 +23,9 @@ Build job:
 
 ## Jenkinsfile-Promotion
 
+Expects parameter VERSION (x.x.x-SNAPSHOT) specifying an artifact version to build. Promotes the newst artifact of specified version found on Nexus repo. 
+Additionally, pipeline is checking an artifact with SHA1 checksum.
+
 Promotion job:
 - triggered manually;
 - takes artifact version as an input parameter; 
@@ -32,6 +35,7 @@ Promotion job:
 - Build Docker image with released artifact (pulls proper version from Nexus release repo). Tag it like: petclinic:release-artifact-version (e.g. petclinic:1.0.0) and push it to DockerHub release registry.
 - trigger deploy job(release version)
 
+
 ## Jenkinsfile-Deploy
 
 Deployment job:
@@ -39,3 +43,11 @@ Deployment job:
 - receives artifact version as a parameter;
 - runs Docker container on the slave instance. 
 - Make sure that you are able to open the PetClinic start page on 80 port.
+
+## Dockerfile
+
+A dockerfile to build a docker image with. Assumes a path to .jar file passed with $jarfile argument on build.
+
+## mvn-settings.xml
+
+A maven settings to use on app build. Needed for Nexus proxy, release and snapshot setup.

@@ -1,3 +1,4 @@
+# requires path to jar proovided arg $jarfile
 FROM sapmachine:17.0.6
 WORKDIR /opt/app
 ARG jarfile

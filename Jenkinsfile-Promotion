@@ -1,6 +1,10 @@
 // takes artifact to promote version as parameter VERSION
 pipeline {
     agent {label 'docker'}
+
+    parameters {
+        string(name: 'VERSION', description: 'Artifact version (x.x.x-SNAPSHOT)')
+    }
  
     environment {
         // nexus URL (host:port)
