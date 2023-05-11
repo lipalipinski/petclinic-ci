@@ -23,8 +23,6 @@ pipeline {
             steps {
                 // set custom build name
                 script {
-                    def pom = readMavenPom()
-                    env.VERSION = pom.getVersion()
                     currentBuild.displayName = "#" + currentBuild.number + " ${env.VERSION}"
                 }
                 // download artifact from nexus
