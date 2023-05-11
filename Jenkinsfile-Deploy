@@ -20,7 +20,7 @@ pipeline {
                     currentBuild.displayName = "#" + currentBuild.number + " ${env.VERSION}"
                     // run app container
                     docker.withRegistry("https://${env.NEXUS_DOCKER_REL}", 'nexus-admin') {
-                        docker.image("petclinic:${env.VERSION}").withRun('--rm -p 80:8080') {
+                        docker.image("petclinic:${env.VERSION}").withRun('-p 80:8080') {
                             // check if app is available on port :80
                             sh './scripts/check-site.sh 80'
                         }
