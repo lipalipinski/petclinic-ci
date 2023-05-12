@@ -4,6 +4,8 @@ pipeline {
     
     parameters {
         string(name: 'VERSION', description: 'Artifact version (x.x.x-SNAPSHOT)')
+        string(name: 'GROUP_ID', defaultValue: 'org.springframework.samples')
+        string(name: 'APP_ID', defaultValue: 'spring-petclinic')
     }
  
     environment {
