@@ -22,6 +22,25 @@ These pipelines require following credentials set in Jenkins:
 - **docker-snapshots** (text) `host:port`
 
 
+### pom.xml modifications
+
+Add the following block to pom.xml in app repo beetwen `<version>` and `<parent>` tags
+
+```xml
+<distributionManagement>
+    <repository>
+        <id>nexus</id>
+        <name>maven-releases</name>
+        <url>${env.NEXUS_RELEASES}</url>
+    </repository>
+    <snapshotRepository>
+        <id>nexus</id>
+        <name>maven-snapshots</name>
+        <url>${env.NEXUS_SNAPSHOTS}</url>
+    </snapshotRepository>
+</distributionManagement>
+```
+
 ## Jenkinsfile-PreCommit
 
 > PreCommit job:
