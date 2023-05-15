@@ -4,6 +4,12 @@ This repo is a part of Intro to DevOps final project. It's main purpose is to se
 
 Jenkins pipelines are designed to be used with [Remote Jenkinsfile Provider](https://plugins.jenkins.io/remote-file/). Main logic is to set Branch Source to app respository, and this repo in Jenkinsfile SCM/Repository URL in Build Confiiguration (with Mode set to Remote Jenkinsfile Provider Plugin) in Jenkins. This repository is being checkout into workdir if necessary in the checkout SCM step. Eacz pipeline sets custom build name like #[build no.] [VERSION].
 
+### Required Jenkins plugins
+- [Docker Pipeline](https://plugins.jenkins.io/docker-workflow/)
+- [Nexus Artifact Uploader](https://plugins.jenkins.io/nexus-artifact-uploader/)
+- [Pipeline Utility Steps](https://plugins.jenkins.io/pipeline-utility-steps/)
+- [Remote Jenkinsfile Provider](https://plugins.jenkins.io/remote-file/)
+
 ## Jenkinsfile-PreCommit
 
 PreCommit job:
