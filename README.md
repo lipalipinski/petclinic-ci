@@ -13,7 +13,14 @@ Jenkins pipelines are designed to be used with [Remote Jenkinsfile Provider](htt
 ### Jenkins credentials
 
 These pipelines require following credentials set in Jenkins:
-- 
+- **nexus-user** (username + password)
+- **nexus-url** (text) `host:port`
+- **nexus-mvn-central** `http://host:port/repository/repo-name`
+- **nexus-mvn-releases** (text) `http://host:port/repository/repo-name`
+- **nexus-mvn-snapshots** (text) `http://host:port/repository/repo-name`
+- **docker-releases** (text) `host:port`
+- **docker-snapshots** (text) `host:port`
+
 
 ## Jenkinsfile-PreCommit
 

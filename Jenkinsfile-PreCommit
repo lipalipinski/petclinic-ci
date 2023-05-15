@@ -9,6 +9,10 @@ pipeline {
     environment {
         // CI repo dir name
         CI_REPO="CI-REPOSITORY"
+        // releases repo URL
+        NEXUS_RELEASES=credentials('nexus-mvn-releases')
+        // snapshots repo URL
+        NEXUS_SNAPSHOTS=credentials('nexus-mvn-snapshots')
     }
     
     options { 

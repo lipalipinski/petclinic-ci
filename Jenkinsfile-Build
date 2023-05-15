@@ -7,16 +7,16 @@ pipeline {
     }
 
     environment {
+        // NEXUS_USER_USR NEXUS_USER_PSW
+        NEXUS_USER=credentials('nexus-user')
+        // nexus URL (host:port)
+        NEXUS_URL=credentials('nexus-url')
         // releases repo URL
         NEXUS_RELEASES=credentials('nexus-mvn-releases')
         // snapshots repo URL
         NEXUS_SNAPSHOTS=credentials('nexus-mvn-snapshots')
-        // central proxy repo URL
-        NEXUS_CENTRAL=credentials('nexus-mvn-central')
-        // NEXUS_USER_USR NEXUS_USER_PSW
-        NEXUS_USER=credentials('nexus-user')
         // nexus docker registry
-        NEXUS_DOCKER_SNAPS=credentials('docker-reg-url-snaps')
+        DOCKER_SNAPSHOTS=credentials('docker-snapshots')
         // CI repo dir name
         CI_REPO="CI-REPOSITORY"
     }
@@ -58,7 +58,7 @@ pipeline {
         stage('Build container') {
             steps {
                 script{
-                    docker.withRegistry("https://${NEXUS_DOCKER_SNAPS}", 'nexus-user') {
+                    docker.withRegistry("https://${DOCKER_SNAPSHOTS}", 'nexus-user') {
                         def myImage = docker.build("${env.APP_NAME}:${env.VERSION}", "--build-arg jarfile=target/${env.APP_ID}-${env.VERSION}.jar -f ${env.CI_REPO}/Dockerfile ./")
                         myImage.push()
                     }

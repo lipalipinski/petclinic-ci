@@ -4,12 +4,12 @@ pipeline {
     agent {label 'docker'}
 
     environment {
-        // nexus URL (host:port)
-        NEXUS_URL=credentials('nexus-url')
         // NEXUS_USER_USR NEXUS_USER_PSW
         NEXUS_USER=credentials('nexus-user')
+        // nexus URL (host:port)
+        NEXUS_URL=credentials('nexus-url')
         // nexus docker registry (host:port)
-        NEXUS_DOCKER_REL=credentials('docker-reg-url-rel')
+        DOCKER_RELEASES=credentials('docker-releases')
     }
 
     stages {
@@ -19,7 +19,7 @@ pipeline {
                     // set custom build name
                     currentBuild.displayName = "#" + currentBuild.number + " ${env.VERSION}"
                     // run app container
-                    docker.withRegistry("https://${env.NEXUS_DOCKER_REL}", 'nexus-user') {
+                    docker.withRegistry("https://${env.DOCKER_RELEASES}", 'nexus-user') {
                         docker.image("petclinic:${env.VERSION}").withRun('-p 80:8080') {
                             // check if app is available on port :80
                             sh './scripts/check-site.sh 80'

@@ -9,19 +9,17 @@ pipeline {
     }
  
     environment {
+        // NEXUS_USER_USR NEXUS_USER_PSW
+        NEXUS_USER=credentials('nexus-user')
         // nexus URL (host:port)
         NEXUS_URL=credentials('nexus-url')
         // releases repo URL (http://host:port/repo)
         NEXUS_RELEASES=credentials('nexus-mvn-releases')
         // releases repo URL (http://host:port/repo)
         NEXUS_SNAPSHOTS=credentials('nexus-mvn-snapshots')
-        // releases repo URL (http://host:port/repo)
-        NEXUS_CENTRAL=credentials('nexus-mvn-central')
-        // NEXUS_USER_USR NEXUS_USER_PSW
-        NEXUS_USER=credentials('nexus-user')
         // nexus docker registry (host:port)
-        NEXUS_DOCKER_SNAPS=credentials('docker-reg-url-snaps')
-        NEXUS_DOCKER_REL=credentials('docker-reg-url-rel')
+        DOCKER_SNAPSHOTS=credentials('docker-snapshots')
+        DOCKER_RELEASES=credentials('docker-releases')
     }
 
     stages {
@@ -34,8 +32,6 @@ pipeline {
                 // download artifact from nexus
                 script {
                     env.REPO_NAME='maven-snapshots'
-                    env.GROUP_ID='org.springframework.samples'
-                    env.APP_ID='spring-petclinic'
                     sh 'curl -L -u $NEXUS_USER --output "$APP_ID-$VERSION.jar" -X GET "http://$NEXUS_URL/service/rest/v1/search/assets/download?sort=version&repository=$REPO_NAME&maven.groupId=$GROUP_ID&maven.artifactId=$APP_ID&maven.baseVersion=$VERSION&maven.extension=jar"'
                     env.JAR_SHA1=sh(
                         returnStdout: true, 
@@ -85,7 +81,7 @@ pipeline {
         stage('Dockerize'){
             steps{
                 script{
-                    docker.withRegistry("https://${NEXUS_DOCKER_REL}", 'nexus-user') {
+                    docker.withRegistry("https://${DOCKER_RELEASES}", 'nexus-user') {
                         def myImage = docker.build("${env.APP_NAME}:${env.NEW_VERSION}", "--build-arg jarfile=${APP_ID}-${NEW_VERSION}.jar ./")
                         myImage.push()
                     }
