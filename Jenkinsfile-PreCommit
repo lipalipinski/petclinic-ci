@@ -7,14 +7,6 @@ pipeline {
     }
 
     environment {
-        // releases repo URL
-        NEXUS_RELEASES=credentials('nexus-mvn-releases')
-        // snapshots repo URL
-        NEXUS_SNAPSHOTS=credentials('nexus-mvn-snapshots')
-        // central proxy repo URL
-        NEXUS_CENTRAL=credentials('nexus-mvn-central')
-        // NEXUS_ADMIN_USR NEXUS_ADMIN_PSW
-        NEXUS_ADMIN=credentials('nexus-admin')
         // CI repo dir name
         CI_REPO="CI-REPOSITORY"
     }
