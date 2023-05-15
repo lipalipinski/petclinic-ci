@@ -17,8 +17,8 @@ pipeline {
         NEXUS_SNAPSHOTS=credentials('nexus-mvn-snapshots')
         // releases repo URL (http://host:port/repo)
         NEXUS_CENTRAL=credentials('nexus-mvn-central')
-        // NEXUS_ADMIN_USR NEXUS_ADMIN_PSW
-        NEXUS_ADMIN=credentials('nexus-admin')
+        // NEXUS_USER_USR NEXUS_USER_PSW
+        NEXUS_USER=credentials('nexus-user')
         // nexus docker registry (host:port)
         NEXUS_DOCKER_SNAPS=credentials('docker-reg-url-snaps')
         NEXUS_DOCKER_REL=credentials('docker-reg-url-rel')
@@ -36,15 +36,15 @@ pipeline {
                     env.REPO_NAME='maven-snapshots'
                     env.GROUP_ID='org.springframework.samples'
                     env.APP_ID='spring-petclinic'
-                    sh 'curl -L -u $NEXUS_ADMIN --output "$APP_ID-$VERSION.jar" -X GET "http://$NEXUS_URL/service/rest/v1/search/assets/download?sort=version&repository=$REPO_NAME&maven.groupId=$GROUP_ID&maven.artifactId=$APP_ID&maven.baseVersion=$VERSION&maven.extension=jar"'
+                    sh 'curl -L -u $NEXUS_USER --output "$APP_ID-$VERSION.jar" -X GET "http://$NEXUS_URL/service/rest/v1/search/assets/download?sort=version&repository=$REPO_NAME&maven.groupId=$GROUP_ID&maven.artifactId=$APP_ID&maven.baseVersion=$VERSION&maven.extension=jar"'
                     env.JAR_SHA1=sh(
                         returnStdout: true, 
-                        script: 'curl -L -u $NEXUS_ADMIN -X GET "http://$NEXUS_URL/service/rest/v1/search/assets/download?sort=version&repository=$REPO_NAME&maven.groupId=$GROUP_ID&maven.artifactId=$APP_ID&maven.baseVersion=$VERSION&maven.extension=jar.sha1"'
+                        script: 'curl -L -u $NEXUS_USER -X GET "http://$NEXUS_URL/service/rest/v1/search/assets/download?sort=version&repository=$REPO_NAME&maven.groupId=$GROUP_ID&maven.artifactId=$APP_ID&maven.baseVersion=$VERSION&maven.extension=jar.sha1"'
                     ).trim()
-                    sh 'curl -L -u $NEXUS_ADMIN --output "pom.xml" -X GET "http://$NEXUS_URL/service/rest/v1/search/assets/download?sort=version&repository=$REPO_NAME&maven.groupId=$GROUP_ID&maven.artifactId=$APP_ID&maven.baseVersion=$VERSION&maven.extension=pom"'
+                    sh 'curl -L -u $NEXUS_USER --output "pom.xml" -X GET "http://$NEXUS_URL/service/rest/v1/search/assets/download?sort=version&repository=$REPO_NAME&maven.groupId=$GROUP_ID&maven.artifactId=$APP_ID&maven.baseVersion=$VERSION&maven.extension=pom"'
                     env.POM_SHA1=sh(
                         returnStdout: true, 
-                        script: 'curl -L -u $NEXUS_ADMIN -X GET "http://$NEXUS_URL/service/rest/v1/search/assets/download?sort=version&repository=$REPO_NAME&maven.groupId=$GROUP_ID&maven.artifactId=$APP_ID&maven.baseVersion=$VERSION&maven.extension=pom.sha1"'
+                        script: 'curl -L -u $NEXUS_USER -X GET "http://$NEXUS_URL/service/rest/v1/search/assets/download?sort=version&repository=$REPO_NAME&maven.groupId=$GROUP_ID&maven.artifactId=$APP_ID&maven.baseVersion=$VERSION&maven.extension=pom.sha1"'
                     ).trim()
                 }
                 verifySha1 file: "${env.APP_ID}-${env.VERSION}.jar", hash: "${env.JAR_SHA1}"
@@ -67,7 +67,7 @@ pipeline {
                 }
                 nexusArtifactUploader(
                     nexusVersion: 'nexus3', 
-                    credentialsId: 'nexus-admin', 
+                    credentialsId: 'nexus-user', 
                     groupId: "${GROUP_ID}", 
                     nexusUrl: "${NEXUS_URL}", 
                     protocol: 'http', 
@@ -85,7 +85,7 @@ pipeline {
         stage('Dockerize'){
             steps{
                 script{
-                    docker.withRegistry("https://${NEXUS_DOCKER_REL}", 'nexus-admin') {
+                    docker.withRegistry("https://${NEXUS_DOCKER_REL}", 'nexus-user') {
                         def myImage = docker.build("${env.APP_NAME}:${env.NEW_VERSION}", "--build-arg jarfile=${APP_ID}-${NEW_VERSION}.jar ./")
                         myImage.push()
                     }

@@ -10,6 +10,11 @@ Jenkins pipelines are designed to be used with [Remote Jenkinsfile Provider](htt
 - [Pipeline Utility Steps](https://plugins.jenkins.io/pipeline-utility-steps/)
 - [Remote Jenkinsfile Provider](https://plugins.jenkins.io/remote-file/)
 
+### Jenkins credentials
+
+These pipelines require following credentials set in Jenkins:
+- 
+
 ## Jenkinsfile-PreCommit
 
 > PreCommit job:
