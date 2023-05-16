@@ -4,15 +4,15 @@ This repo is a part of Intro to DevOps final project. It's main purpose is to se
 
 Jenkins pipelines are designed to be used with [Remote Jenkinsfile Provider](https://plugins.jenkins.io/remote-file/). Setet job's Branch Source to app respository, and provide this repo in Jenkinsfile SCM/Repository URL in Build Confiiguration (set mode to Remote Jenkinsfile Provider Plugin). This repository is being checkout into workdir if necessary in the checkout SCM step. Each pipeline sets custom build name like #[build no.] [VERSION].
 
-### Required Jenkins plugins
-- [Docker Pipeline](https://plugins.jenkins.io/docker-workflow/)
-- [Nexus Artifact Uploader](https://plugins.jenkins.io/nexus-artifact-uploader/)
-- [Pipeline Utility Steps](https://plugins.jenkins.io/pipeline-utility-steps/)
-- [Remote Jenkinsfile Provider](https://plugins.jenkins.io/remote-file/)
+### 1. Create Nexus repositories
+- **maven-central**, **maven-snapshots** and **maven-releases** should be present by default
+- create docker registries
+    - **docker-snapshots** (create HTTPS connector, use port 18443)
+    - **docker-releases** (create HTTPS connector, use port 18444, disable redeploy)
 
-### Jenkins credentials
+### 2. Configure Jenkins credentials
 
-These pipelines require following credentials set in Jenkins:
+These pipelines require following credentials:
 - **nexus-user** (username + password)
 - **nexus-url** (text) `host:port`
 - **nexus-mvn-central** `http://host:port/repository/repo-name`
@@ -20,6 +20,21 @@ These pipelines require following credentials set in Jenkins:
 - **nexus-mvn-snapshots** (text) `http://host:port/repository/repo-name`
 - **docker-releases** (text) `host:port`
 - **docker-snapshots** (text) `host:port`
+
+### 3. Set-up Jenkins agents
+Use label `docker`
+
+### 4. Install required Jenkins plugins
+- [Docker Pipeline](https://plugins.jenkins.io/docker-workflow/)
+- [Nexus Artifact Uploader](https://plugins.jenkins.io/nexus-artifact-uploader/)
+- [Pipeline Utility Steps](https://plugins.jenkins.io/pipeline-utility-steps/)
+- [Remote Jenkinsfile Provider](https://plugins.jenkins.io/remote-file/)
+
+### 5. Configure global Jenkins tools
+- JDK (JAVA_HOME=`/usr/lib/jvm/temurin-17-jdk-amd64`)
+- Maven
+    - Name: `maven-3.9.1`
+    - Version `3.9.1`
 
 
 ### pom.xml modifications
