@@ -7,18 +7,20 @@ pipeline {
     }
 
     environment {
-        // NEXUS_USER_USR NEXUS_USER_PSW
-        NEXUS_USER=credentials('nexus-user')
-        // nexus URL (host:port)
-        NEXUS_URL=credentials('nexus-url')
+        // CI repo dir name
+        CI_REPO="CI-REPOSITORY"
         // releases repo URL
         NEXUS_RELEASES=credentials('nexus-mvn-releases')
         // snapshots repo URL
         NEXUS_SNAPSHOTS=credentials('nexus-mvn-snapshots')
         // nexus docker registry
         DOCKER_SNAPSHOTS=credentials('docker-snapshots')
-        // CI repo dir name
-        CI_REPO="CI-REPOSITORY"
+        // NEXUS_USER_USR NEXUS_USER_PSW
+        NEXUS_USER=credentials('nexus-user')
+        // nexus maven central repo
+        NEXUS_CENTRAL=credentials('nexus-mvn-central')
+        // nexus URL (host:port)
+        NEXUS_URL=credentials('nexus-url')
     }
 
     options { 
