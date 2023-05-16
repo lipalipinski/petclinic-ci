@@ -13,6 +13,8 @@ pipeline {
         NEXUS_RELEASES=credentials('nexus-mvn-releases')
         // snapshots repo URL
         NEXUS_SNAPSHOTS=credentials('nexus-mvn-snapshots')
+        // nexus maven central repo
+        NEXUS_CENTRAL=credentials('nexus-mvn-central')
     }
     
     options { 
