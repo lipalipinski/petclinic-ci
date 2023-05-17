@@ -29,7 +29,7 @@ Add the following block to pom.xml in app repo beetwen `<version>` and `<parent>
 - **maven-central**, **maven-snapshots** and **maven-releases** should be present by default
 - create docker registries
     - **docker-snapshots** (create HTTPS connector, use port 18443)
-    - **docker-releases** (create HTTPS connector, use port 18444, disable redeploy)
+    - **docker-releases** (create HTTPS connector, use port 18444, **disable redeploy**)
 
 ### 2. Configure Jenkins credentials
 
@@ -65,8 +65,6 @@ Use label `docker`
 - branch source: `application repo`
 - build configuration: `by Remote Jenkinsfile Provider Plugin`
 
-
-Requirements:
 > PreCommit job:
 > - watch for changes being pushed to review to any branch;
 > - build project with Maven, including unit tests (if any); this imitates linter work;
@@ -79,7 +77,7 @@ Requirements:
 - branch source: `application repo`
 - build configuration: `by Remote Jenkinsfile Provider Plugin`
 
-Requirements:
+
 > Build job:
 > - watch for updates on "dev" branch;
 > - build project with Maven, including unit tests (if any);
