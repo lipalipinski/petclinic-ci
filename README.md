@@ -23,7 +23,7 @@ Add the following block to pom.xml in app repo beetwen `<version>` and `<parent>
 </distributionManagement>
 ```
 
-## Jenkins setup
+## Setup
 
 ### 1. Create Nexus repositories
 - **maven-central**, **maven-snapshots** and **maven-releases** should be present by default
@@ -42,7 +42,7 @@ These pipelines require following credentials:
 - **docker-releases** (text) `host:port`
 - **docker-snapshots** (text) `host:port`
 
-### 3. Set-up Jenkins agents
+### 3. Set up Jenkins agents
 Use label `docker`
 
 ### 4. Install required Jenkins plugins
@@ -61,7 +61,7 @@ Use label `docker`
 <hr>
 
 ## Jenkinsfile-PreCommit
-- Set-up as a **Multibranch Pipeline**
+- Set up as a **Multibranch Pipeline**
 - branch source: `application repo`
 - build configuration: `by Remote Jenkinsfile Provider Plugin`
 
@@ -73,7 +73,7 @@ Use label `docker`
 <hr>
 
 ## Jenkinsfile-Build
-- Set-up as a **Multibranch Pipeline**
+- Set up as a **Multibranch Pipeline**
 - branch source: `application repo`
 - build configuration: `by Remote Jenkinsfile Provider Plugin`
 
@@ -89,7 +89,7 @@ Use label `docker`
 <hr>
 
 ## Jenkinsfile-Promotion
-- Set-up as a **Pipeline**
+- Set up as a **Pipeline**
 - Select **This project is parametrised**, set parameters:
     - VERSION (string)
     - GROUP_ID (string) default: `org.springframework.samples`
@@ -113,7 +113,7 @@ Additionally, pipeline is checking an artifact with SHA1 checksum.
 <hr>
 
 ## Jenkinsfile-Deploy
-- Set-up as a **Pipeline**
+- Set up as a **Pipeline**
 - Select **This project is parametrised**, set parameters:
     - VERSION (string)
     - GROUP_ID (string) default: `org.springframework.samples`
