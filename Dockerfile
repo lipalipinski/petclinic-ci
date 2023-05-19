@@ -1,5 +1,5 @@
-# requires path to jar proovided arg $jarfile
-FROM sapmachine:17.0.6
+# requires path to jar provided with arg $jarfile
+FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /opt/app
 ARG jarfile
 COPY $jarfile app.jar

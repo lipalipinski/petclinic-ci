@@ -7,8 +7,8 @@
   <servers>
     <server>
       <id>nexus</id>
-      <username>${env.NEXUS_ADMIN_USR}</username>
-      <password>${env.NEXUS_ADMIN_PSW}</password> 
+      <username>${env.NEXUS_USER_USR}</username>
+      <password>${env.NEXUS_USER_PSW}</password> 
     </server>
   </servers>
 
@@ -29,7 +29,6 @@
       <repositories>
         <repository>
           <id>central</id>
-          <!--url>http://central</url-->
           <url>${env.NEXUS_CENTRAL}</url>
           <releases><enabled>true</enabled></releases>
           <snapshots><enabled>true</enabled></snapshots>
@@ -38,7 +37,6 @@
      <pluginRepositories>
         <pluginRepository>
           <id>central</id>
-          <!--url>http://central</url-->
           <url>${env.NEXUS_CENTRAL}</url>
           <releases><enabled>true</enabled></releases>
           <snapshots><enabled>true</enabled></snapshots>

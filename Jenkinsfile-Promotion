@@ -1,25 +1,26 @@
 // takes artifact to promote version as parameter VERSION
 pipeline {
     agent {label 'docker'}
-
+    
     parameters {
         string(name: 'VERSION', description: 'Artifact version (x.x.x-SNAPSHOT)')
+        string(name: 'GROUP_ID', defaultValue: 'org.springframework.samples')
+        string(name: 'APP_ID', defaultValue: 'spring-petclinic')
+        string(name: 'REPO_NAME', defaultValue: 'maven-snapshots')
     }
  
     environment {
+        // NEXUS_USER_USR NEXUS_USER_PSW
+        NEXUS_USER=credentials('nexus-user')
         // nexus URL (host:port)
         NEXUS_URL=credentials('nexus-url')
         // releases repo URL (http://host:port/repo)
         NEXUS_RELEASES=credentials('nexus-mvn-releases')
         // releases repo URL (http://host:port/repo)
         NEXUS_SNAPSHOTS=credentials('nexus-mvn-snapshots')
-        // releases repo URL (http://host:port/repo)
-        NEXUS_CENTRAL=credentials('nexus-mvn-central')
-        // NEXUS_ADMIN_USR NEXUS_ADMIN_PSW
-        NEXUS_ADMIN=credentials('nexus-admin')
         // nexus docker registry (host:port)
-        NEXUS_DOCKER_SNAPS=credentials('docker-reg-url-snaps')
-        NEXUS_DOCKER_REL=credentials('docker-reg-url-rel')
+        DOCKER_SNAPSHOTS=credentials('docker-snapshots')
+        DOCKER_RELEASES=credentials('docker-releases')
     }
 
     stages {
@@ -31,39 +32,47 @@ pipeline {
                 }
                 // download artifact from nexus
                 script {
-                    env.REPO_NAME='maven-snapshots'
-                    env.GROUP_ID='org.springframework.samples'
-                    env.ART_ID='spring-petclinic'
-                    sh 'curl -L -u $NEXUS_ADMIN --output "$ART_ID-$VERSION.jar" -X GET "http://$NEXUS_URL/service/rest/v1/search/assets/download?sort=version&repository=$REPO_NAME&maven.groupId=$GROUP_ID&maven.artifactId=$ART_ID&maven.baseVersion=$VERSION&maven.extension=jar"'
+                    sh 'curl -L -u $NEXUS_USER --output "$APP_ID-$VERSION.jar" -X GET "http://$NEXUS_URL/service/rest/v1/search/assets/download?sort=version&repository=$REPO_NAME&maven.groupId=$GROUP_ID&maven.artifactId=$APP_ID&maven.baseVersion=$VERSION&maven.extension=jar"'
                     env.JAR_SHA1=sh(
                         returnStdout: true, 
-                        script: 'curl -L -u $NEXUS_ADMIN -X GET "http://$NEXUS_URL/service/rest/v1/search/assets/download?sort=version&repository=$REPO_NAME&maven.groupId=$GROUP_ID&maven.artifactId=$ART_ID&maven.baseVersion=$VERSION&maven.extension=jar.sha1"'
+                        script: 'curl -L -u $NEXUS_USER -X GET "http://$NEXUS_URL/service/rest/v1/search/assets/download?sort=version&repository=$REPO_NAME&maven.groupId=$GROUP_ID&maven.artifactId=$APP_ID&maven.baseVersion=$VERSION&maven.extension=jar.sha1"'
+                    ).trim()
+                    sh 'curl -L -u $NEXUS_USER --output "pom.xml" -X GET "http://$NEXUS_URL/service/rest/v1/search/assets/download?sort=version&repository=$REPO_NAME&maven.groupId=$GROUP_ID&maven.artifactId=$APP_ID&maven.baseVersion=$VERSION&maven.extension=pom"'
+                    env.POM_SHA1=sh(
+                        returnStdout: true, 
+                        script: 'curl -L -u $NEXUS_USER -X GET "http://$NEXUS_URL/service/rest/v1/search/assets/download?sort=version&repository=$REPO_NAME&maven.groupId=$GROUP_ID&maven.artifactId=$APP_ID&maven.baseVersion=$VERSION&maven.extension=pom.sha1"'
                     ).trim()
                 }
-                verifySha1 file: "${env.ART_ID}-${env.VERSION}.jar", hash: "${env.JAR_SHA1}"
+                verifySha1 file: "${env.APP_ID}-${env.VERSION}.jar", hash: "${env.JAR_SHA1}"
+                verifySha1 file: "pom.xml", hash: "${env.POM_SHA1}"
             }
         }
         stage('Promote & push'){
             steps {
                 script {
+                    // read pom.xml
+                    def pom = readMavenPom()
+                    env.APP_NAME = pom.getName()
+                    env.APP_ID = pom.getArtifactId()
+                    env.GROUP_ID = pom.getGroupId()
                     env.NEW_VERSION=sh(
                         returnStdout: true, 
                         script: 'echo "${VERSION%-SNAPSHOT}"'
                     ).trim()
-                    sh 'mv $ART_ID-$VERSION.jar "$ART_ID-$NEW_VERSION.jar"'
+                    sh 'mv $APP_ID-$VERSION.jar "$APP_ID-$NEW_VERSION.jar"'
                 }
                 nexusArtifactUploader(
                     nexusVersion: 'nexus3', 
-                    credentialsId: 'nexus-admin', 
-                    groupId: 'org.springframework.samples', 
+                    credentialsId: 'nexus-user', 
+                    groupId: "${GROUP_ID}", 
                     nexusUrl: "${NEXUS_URL}", 
                     protocol: 'http', 
                     repository: 'maven-releases', 
                     version: "${NEW_VERSION}",
                     artifacts: [
-                        [artifactId: 'spring-petclinic', 
+                        [artifactId: "${APP_ID}", 
                         classifier: '', 
-                        file: "${ART_ID}-${NEW_VERSION}.jar", 
+                        file: "${APP_ID}-${NEW_VERSION}.jar", 
                         type: 'jar']
                     ] 
                 )
@@ -72,8 +81,8 @@ pipeline {
         stage('Dockerize'){
             steps{
                 script{
-                    docker.withRegistry("https://${NEXUS_DOCKER_REL}", 'nexus-admin') {
-                        def myImage = docker.build("petclinic:${env.NEW_VERSION}", "--build-arg jarfile=${ART_ID}-${NEW_VERSION}.jar ./")
+                    docker.withRegistry("https://${DOCKER_RELEASES}", 'nexus-user') {
+                        def myImage = docker.build("${env.APP_NAME}:${env.NEW_VERSION}", "--build-arg jarfile=${APP_ID}-${NEW_VERSION}.jar ./")
                         myImage.push()
                     }
                 }
