@@ -4,6 +4,8 @@ This repo is a part of Intro to DevOps final project. It's main purpose is to se
 
 Jenkins pipelines are designed to be used with [Remote Jenkinsfile Provider](https://plugins.jenkins.io/remote-file/). Setet job's Branch Source to app respository, and provide this repo in Jenkinsfile SCM/Repository URL in Build Confiiguration (set mode to Remote Jenkinsfile Provider Plugin). This repository is being checkout into workdir if necessary in the checkout SCM step. Each pipeline sets custom build name like #[build no.] [VERSION].
 
+![pipeline schema](./pipeline-schema.png)
+
 ### **pom.xml modifications**
 
 Add the following block to pom.xml in app repo beetwen `<version>` and `<parent>` tags
