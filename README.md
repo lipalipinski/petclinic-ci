@@ -2,6 +2,10 @@
 
 This repo is a part of Intro to DevOps final project. It's main purpose is to separate CI/CD related files from app repo.
 
+Other parts of this project:
+- [Spring-Petclinic repo fork](https://github.com/lipalipinski/spring-petclinic.git)
+- [vm-setup repo](https://github.com/lipalipinski/vm-setup.git)
+
 Jenkins pipelines are designed to be used with [Remote Jenkinsfile Provider](https://plugins.jenkins.io/remote-file/). Setet job's Branch Source to app respository, and provide this repo in Jenkinsfile SCM/Repository URL in Build Confiiguration (set mode to Remote Jenkinsfile Provider Plugin). This repository is being checkout into workdir if necessary in the checkout SCM step. Each pipeline sets custom build name like #[build no.] [VERSION].
 
 ![pipeline schema](./pipeline-schema.png)
