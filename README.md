@@ -31,42 +31,25 @@ Add the following block to pom.xml in app repo beetwen `<version>` and `<parent>
 
 ## Setup
 
-### 1. Create Nexus repositories
+### Nexus repositories
 - **maven-central**, **maven-snapshots** and **maven-releases** should be present by default
 - create docker registries
     - **docker-snapshots** (create HTTPS connector, use port 18443)
     - **docker-releases** (create HTTPS connector, use port 18444, **disable redeploy**)
 
-### 2. Configure Jenkins credentials
 
-These pipelines require following credentials:
-- **nexus-user** (username + password)
-- **nexus-url** (text) `host:port`
-- **nexus-mvn-central** `http://host:port/repository/repo-name`
-- **nexus-mvn-releases** (text) `http://host:port/repository/repo-name`
-- **nexus-mvn-snapshots** (text) `http://host:port/repository/repo-name`
-- **docker-releases** (text) `host:port`
-- **docker-snapshots** (text) `host:port`
 
-### 3. Set up Jenkins agents
-Use label `docker`
+### Jenkins configuration
 
-### 4. Install required Jenkins plugins
-- [Docker Pipeline](https://plugins.jenkins.io/docker-workflow/)
-- [Nexus Artifact Uploader](https://plugins.jenkins.io/nexus-artifact-uploader/)
-- [Pipeline Utility Steps](https://plugins.jenkins.io/pipeline-utility-steps/)
-- [Remote Jenkinsfile Provider](https://plugins.jenkins.io/remote-file/)
+Jenkins is pre-configured when set up with [vm-setup repo](https://github.com/lipalipinski/vm-setup.git). 
+- [Plugin Installation Manager Tool for Jenkins](https://github.com/jenkinsci/plugin-installation-manager-tool) installs necessary plugins
+- [Configuration as Code Plugin](https://plugins.jenkins.io/configuration-as-code/) sets up default credentials, configures Jenkins Agent and global Jenkins tools
 
-### 5. Configure global Jenkins tools
-- JDK (JAVA_HOME=`/usr/lib/jvm/temurin-17-jdk-amd64`)
-- Maven
-    - Name: `maven-3.9.1`
-    - Version `3.9.1`
-
+## Jenkins Job Configuration
 
 <hr>
 
-## Jenkinsfile-PreCommit
+### [Jenkinsfile-PreCommit](Jenkinsfile-PreCommit)
 - Set up as a **Multibranch Pipeline**
 - branch source: `application repo`
 - build configuration: `by Remote Jenkinsfile Provider Plugin`
@@ -78,7 +61,7 @@ Use label `docker`
 
 <hr>
 
-## Jenkinsfile-Build
+### [Jenkinsfile-Build](Jenkinsfile-Build)
 - Set up as a **Multibranch Pipeline**
 - branch source: `application repo`
 - build configuration: `by Remote Jenkinsfile Provider Plugin`
@@ -94,7 +77,7 @@ Use label `docker`
 
 <hr>
 
-## Jenkinsfile-Promotion
+### [Jenkinsfile-Promotion](Jenkinsfile-Promotion)
 - Set up as a **Pipeline**
 - Select **This project is parametrised**, set parameters:
     - VERSION (string)
@@ -118,7 +101,7 @@ Additionally, pipeline is checking an artifact with SHA1 checksum.
 
 <hr>
 
-## Jenkinsfile-Deploy
+### [Jenkinsfile-Deploy](Jenkinsfile-Deploy)
 - Set up as a **Pipeline**
 - Select **This project is parametrised**, set parameters:
     - VERSION (string)
@@ -136,14 +119,14 @@ Additionally, pipeline is checking an artifact with SHA1 checksum.
 
 <hr>
 
-## Dockerfile
+### [Dockerfile](Dockerfile)
 
 A dockerfile to build a docker image with. Assumes a path to .jar file passed with $jarfile argument on build.
 
-## mvn-settings.xml
+### [mvn-settings.xml](mvn-settings.xml)
 
 Custom maven settings to use on app build. Needed for Nexus proxy, release and snapshot setup.
 
-## scripts/check-site.sh
+### [scripts/check-site.sh](scripts/check-site.sh)
 
 A script checking for app response on a port provided with $1 arg. By default it checks in 2s intervals and time-outs after 60s.
