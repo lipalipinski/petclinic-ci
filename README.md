@@ -50,9 +50,7 @@ Jenkins is pre-configured when set up with [vm-setup repo](https://github.com/li
 <hr>
 
 ### [Jenkinsfile-PreCommit](Jenkinsfile-PreCommit)
-- Set up as a **Multibranch Pipeline**
-- branch source: `application repo`
-- build configuration: `by Remote Jenkinsfile Provider Plugin`
+Configured with [Job DSL Plugin](https://plugins.jenkins.io/job-dsl/) and [Plugin Installation Manager Tool for Jenkins](https://github.com/jenkinsci/plugin-installation-manager-tool) by Ansible in [vm-setup repo](https://github.com/lipalipinski/vm-setup.git).
 
 > PreCommit job:
 > - watch for changes being pushed to review to any branch;
@@ -62,9 +60,7 @@ Jenkins is pre-configured when set up with [vm-setup repo](https://github.com/li
 <hr>
 
 ### [Jenkinsfile-Build](Jenkinsfile-Build)
-- Set up as a **Multibranch Pipeline**
-- branch source: `application repo`
-- build configuration: `by Remote Jenkinsfile Provider Plugin`
+Configured with [Job DSL Plugin](https://plugins.jenkins.io/job-dsl/) and [Plugin Installation Manager Tool for Jenkins](https://github.com/jenkinsci/plugin-installation-manager-tool) by Ansible in [vm-setup repo](https://github.com/lipalipinski/vm-setup.git).
 
 
 > Build job:
