@@ -74,17 +74,8 @@ Configured with [Job DSL Plugin](https://plugins.jenkins.io/job-dsl/) and [Plugi
 <hr>
 
 ### [Jenkinsfile-Promotion](Jenkinsfile-Promotion)
-- Set up as a **Pipeline**
-- Select **This project is parametrised**, set parameters:
-    - VERSION (string)
-    - GROUP_ID (string) default: `org.springframework.samples`
-    - APP_ID (string) default: `spring-petclinic`
-- pipeline triggers job `Petclinic-Deploy`, therfore expects it to exists on time of build
-- Set `Pipeline script from SCM`
-- Uncheck **Lightweight checkout**
-
-Expects parameter VERSION (x.x.x-SNAPSHOT) specifying an artifact version to build. Promotes the newest artifact of specified version found on Nexus repo. 
-Additionally, pipeline is checking an artifact with SHA1 checksum.
+Configured with [Job DSL Plugin](https://plugins.jenkins.io/job-dsl/) and [Plugin Installation Manager Tool for Jenkins](https://github.com/jenkinsci/plugin-installation-manager-tool) by Ansible in [vm-setup repo](https://github.com/lipalipinski/vm-setup.git).
+Expects parameter VERSION (x.x.x-SNAPSHOT) specifying an artifact version to build. Promotes the newest artifact of specified version found on Nexus repo. Triggers **Petclinic-Deploy** job on success.
 
 >Promotion job:
 > - triggered manually;
@@ -95,17 +86,12 @@ Additionally, pipeline is checking an artifact with SHA1 checksum.
 > - Build Docker image with released artifact (pulls proper version from Nexus release repo). Tag it like: petclinic:release-artifact-version (e.g. petclinic:1.0.0) and push it to DockerHub release registry.
 > - trigger deploy job(release version)
 
+Additionally, pipeline is checking an artifact SHA1 checksum.
+
 <hr>
 
 ### [Jenkinsfile-Deploy](Jenkinsfile-Deploy)
-- Set up as a **Pipeline**
-- Select **This project is parametrised**, set parameters:
-    - VERSION (string)
-    - GROUP_ID (string) default: `org.springframework.samples`
-    - APP_ID (string) default: `spring-petclinic`
-    - REPO_NAME (string) default: `maven-snapshots`
-- Set `Pipeline script from SCM`
-- Uncheck **Lightweight checkout**
+Configured with [Job DSL Plugin](https://plugins.jenkins.io/job-dsl/) and [Plugin Installation Manager Tool for Jenkins](https://github.com/jenkinsci/plugin-installation-manager-tool) by Ansible in [vm-setup repo](https://github.com/lipalipinski/vm-setup.git).
 
 > Deployment job:
 > - can be triggered by the Promotion job or manually;
