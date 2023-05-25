@@ -50,6 +50,8 @@ Jenkins is pre-configured when set up with [vm-setup repo](https://github.com/li
 <hr>
 
 ### [Jenkinsfile-PreCommit](Jenkinsfile-PreCommit)
+This job is **dissabled** by default to prevent it from running before Nexus setup is finished. Enable the job manually after when Nexus user and repositories are configured and ready to use.
+
 Configured with [Job DSL Plugin](https://plugins.jenkins.io/job-dsl/) and [Plugin Installation Manager Tool for Jenkins](https://github.com/jenkinsci/plugin-installation-manager-tool) by Ansible in [vm-setup repo](https://github.com/lipalipinski/vm-setup.git).
 
 > PreCommit job:
@@ -60,6 +62,8 @@ Configured with [Job DSL Plugin](https://plugins.jenkins.io/job-dsl/) and [Plugi
 <hr>
 
 ### [Jenkinsfile-Build](Jenkinsfile-Build)
+This job is **dissabled** by default to prevent it from running before Nexus setup is finished. Enable the job manually after when Nexus user and repositories are configured and ready to use.
+
 Configured with [Job DSL Plugin](https://plugins.jenkins.io/job-dsl/) and [Plugin Installation Manager Tool for Jenkins](https://github.com/jenkinsci/plugin-installation-manager-tool) by Ansible in [vm-setup repo](https://github.com/lipalipinski/vm-setup.git).
 
 
