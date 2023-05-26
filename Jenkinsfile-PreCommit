@@ -45,8 +45,10 @@ pipeline {
         }
         stage('test app') {
             steps {
-                echo "Building..."
-                sh "mvn --batch-mode -s ${env.CI_REPO}/mvn-settings.xml clean test"
+                lock('maven') {
+                    echo "Building..."
+                    sh "mvn --batch-mode -s ${env.CI_REPO}/mvn-settings.xml clean test"
+                }
             }
         }
     }
