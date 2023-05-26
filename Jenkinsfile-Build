@@ -54,7 +54,7 @@ pipeline {
         stage('Mvn deploy to nexus') {
             steps {
                 echo "Building..."
-                sh "mvn -Dmaven.test.failure.ignore=true --batch-mode -s ${env.CI_REPO}/mvn-settings.xml clean deploy"
+                sh "mvn --batch-mode -s ${env.CI_REPO}/mvn-settings.xml clean deploy"
             }
         }
         stage('Build container') {

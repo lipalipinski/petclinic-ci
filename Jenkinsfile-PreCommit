@@ -46,7 +46,7 @@ pipeline {
         stage('test app') {
             steps {
                 echo "Building..."
-                sh "mvn -Dmaven.test.failure.ignore=true --batch-mode -s ${env.CI_REPO}/mvn-settings.xml clean test"
+                sh "mvn --batch-mode -s ${env.CI_REPO}/mvn-settings.xml clean test"
             }
         }
     }
