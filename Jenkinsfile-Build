@@ -1,5 +1,5 @@
 pipeline {
-    agent {label 'docker'}
+    agent {label 'docker-dynamic'}
 
     tools {
         // Install Maven
@@ -53,10 +53,8 @@ pipeline {
         }
         stage('Mvn deploy to nexus') {
             steps {
-                lock('maven') {
                     echo "Building..."
                     sh "mvn --batch-mode -s ${env.CI_REPO}/mvn-settings.xml clean deploy"
-                }
             }
         }
         stage('Build container') {
