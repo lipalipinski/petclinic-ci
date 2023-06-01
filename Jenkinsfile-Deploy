@@ -1,7 +1,7 @@
 // takes image version as VERSION param
 
 pipeline {
-    agent {label 'docker'}
+    agent {label 'docker-dynamic'}
 
     environment {
         // NEXUS_USER_USR NEXUS_USER_PSW

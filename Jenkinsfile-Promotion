@@ -1,6 +1,6 @@
 // takes artifact to promote version as parameter VERSION
 pipeline {
-    agent {label 'docker'}
+    agent {label 'docker-dynamic'}
     
     parameters {
         string(name: 'VERSION', description: 'Artifact version (x.x.x-SNAPSHOT)')
