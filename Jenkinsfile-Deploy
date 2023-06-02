@@ -22,7 +22,7 @@ pipeline {
                     docker.withRegistry("https://${env.DOCKER_RELEASES}", 'nexus-user') {
                         docker.image("petclinic:${env.VERSION}").withRun('-p 80:8080') {
                             // check if app is available on port :80
-                            sh "./scripts/check-site.sh $(echo ":80" | cat /sbin/ip route|awk '/default/ { print $3 }')"
+                            sh "./scripts/check-site.sh $(echo ":80" | cat /sbin/ip route|awk '/default/ { print \$3 }')"
                         }
                     }
                 }
