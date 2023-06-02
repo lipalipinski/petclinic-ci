@@ -1,15 +1,14 @@
 #!/bin/bash
 
-# check if server responds on a given port
+# check if server responds on a given url
 
-hostip=$(/sbin/ip route|awk '/default/ { print $3 }')
+url=$1
 interval=2
 tout=60
-port=$1
 
 for (( i=0; i<$tout; i+=$interval ))
 do 
-  resp=$(curl -s -I $hostip:$port | grep "HTTP/1.1")
+  resp=$(curl -s -I $url | grep "HTTP/1.1")
   if [[ $resp == *"200"* ]]
   then
     echo "$resp"
@@ -20,5 +19,5 @@ do
 done
 
 echo "$resp"
-echo "Site unavailable at http://$hostip:$port"
+echo "Site unavailable at http://$url"
 exit 62
